@@ -4,11 +4,11 @@ This project implements the building blocks for writing
 Scala parsers using the parser combinators idiom. The following
 building blocks are expected:
 
-   [x] item  
-   [x] sat
-   [x] many
-   [ ] biased choice
-   [ ] sequency
+   * [x] item  
+   * [x] sat
+   * [x] many
+   * [ ] biased choice
+   * [ ] sequency
 
 ## Goals
 
