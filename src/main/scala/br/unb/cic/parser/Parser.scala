@@ -7,14 +7,14 @@ package br.unb.cic.parser
 
 type Parser[A] = String => List[(A, String)]
 
-def item: Parser[Char] = (input: String) => input match {
-  case "" => Nil
-  case _ => List((input.head, input.tail))
+def item: Parser[Char] = (input: String) => input.toList match {
+  case Nil => Nil
+  case h::rest => List((h, rest.mkString))
 }
 
-def sat(p : Char => Boolean) : Parser[Char] = (input : String) => input match {
-  case "" => Nil
-  case _  => if(p(input.head)) then  List((input.head, input.tail)) else Nil
+def sat(p : Char => Boolean) : Parser[Char] = (input : String) => input.toList match {
+  case Nil => Nil
+  case h::rest  => if p(h) then  List((h, rest.mkString)) else Nil
 }
 
 def digit = sat (c => c.isDigit)
@@ -26,5 +26,7 @@ def many[A](p : Parser[A]) : Parser[List[A]] = (input : String) => p(input) matc
     case List((output, tail)) =>
       many(p)(tail) match {
         case List((f, foo)) =>  List((output::f, foo))
+        case _ => List()
       }
+    case _ => List()
 }
