@@ -53,5 +53,11 @@ class ParserTest extends AnyFunSuite {
       assert(bind(digit)((c: Char) => pure(c.toInt))("abc") == List())
       assert(bind(digit)((c: Char) => pure(c.asDigit))("9abc") == List((9, "abc")))
       assert(number("9abc") == List((9, "abc")))
+      assert(sum("4+3abc") == List((7, "abc")))
   }
+
+  def sum: Parser[Int] =
+    bind(number)((x: Int) =>
+      bind(char('+'))((c: Char) =>
+        bind(number)((y: Int) => pure(x + y))))
 }

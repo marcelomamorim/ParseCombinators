@@ -15,6 +15,7 @@ def sat(p : Char => Boolean) : Parser[Char] = (input : String) => input.toList m
 def digit = sat (c => c.isDigit)
 def alpha = sat (c => c.isLetter)
 def alphaOrDigit = sat (c => c.isLetterOrDigit)
+def char(c1: Char) = sat ((c2: Char) => c1 == c2)
 
 def many[A](p : Parser[A]) : Parser[List[A]] = (input : String) => p(input) match {
     case Nil => List((Nil, input))
@@ -51,4 +52,5 @@ def bind[A,B] (p: Parser[A])(f : A => Parser[B]): Parser [B] = (input: String) =
 }
 
 
-val number: Parser[Int] = bind(digit)((c: Char) => pure(c.asDigit))
+def number: Parser[Int] = bind(digit)((c: Char) => pure(c.asDigit))
+
