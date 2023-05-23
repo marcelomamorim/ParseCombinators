@@ -52,6 +52,6 @@ class ParserTest extends AnyFunSuite {
   test("test for the bind combinator") {
       assert(bind(digit)((c: Char) => pure(c.toInt))("abc") == List())
       assert(bind(digit)((c: Char) => pure(c.asDigit))("9abc") == List((9, "abc")))
-      
+      assert(number("9abc") == List((9, "abc")))
   }
 }

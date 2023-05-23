@@ -47,7 +47,8 @@ infix def choice[A] (p: Parser[A])(q: Parser[A]): Parser[A] = (input: String) =>
 def bind[A,B] (p: Parser[A])(f : A => Parser[B]): Parser [B] = (input: String) => p(input) match {
   case Nil => Nil       // we propagate the failure
   case List((a, r)) => f(a)(r)
+  case _ =>  ???        // what the hell ... ambiguity
 }
 
 
-// def number(s: Sting) = bind(digit)(c: Char => pure(c.asDigit)(s))
+val number: Parser[Int] = bind(digit)((c: Char) => pure(c.asDigit))
