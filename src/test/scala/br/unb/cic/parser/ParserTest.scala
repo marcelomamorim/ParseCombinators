@@ -30,4 +30,28 @@ class ParserTest extends AnyFunSuite {
     assert(many(digit)("abc") == List((Nil, "abc")))
     assert(many(digit)("1a1bc") == List((List('1'), "a1bc")))
   }
+
+  test("tests for the pure parser") {
+    assert(pure(4)("abc") == List((4, "abc")))
+    assert(pure(4)("") == List((4, "")))
+    assert(pure("MODULE")("abc") == List(("MODULE", "abc")))
+  }
+
+  ignore("tests for the fail parser") {
+    assert(fail("abc") == Nil)
+    assert(fail("") == Nil)
+  }
+
+  test("tests for the choice combinator") {
+    assert(choice(digit)(alpha)("abc") == List(('a', "bc")))
+    assert(choice(digit)(alpha)("9abc") == List(('9', "abc")))
+    assert(choice(alpha)(digit)("9abc") == List(('9', "abc")))
+    assert(choice(alpha)(alpha)("9abc") == List())
+  }
+
+  test("test for the bind combinator") {
+      assert(bind(digit)((c: Char) => pure(c.toInt))("abc") == List())
+      assert(bind(digit)((c: Char) => pure(c.asDigit))("9abc") == List((9, "abc")))
+      
+  }
 }
