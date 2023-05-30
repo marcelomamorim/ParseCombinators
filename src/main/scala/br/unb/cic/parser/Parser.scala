@@ -35,7 +35,7 @@ def many[A](p : Parser[A]) : Parser[List[A]] = (input : String) => p(input) matc
 def pure[A](value: A): Parser[A] = (input: String) => List((value, input))
 
 /** Another primitive parser that always fails */
-def fail[A] : Parser[A] = (input: String) => Nil
+def failed[A] : Parser[A] = (input: String) => List()
 
 /** a combinator that receives two parsers and return the first one if it succeeds. Otherwise, returns the second one. */
 infix def choice[A] (p: Parser[A])(q: Parser[A]): Parser[A] = (input: String) => p(input) match {

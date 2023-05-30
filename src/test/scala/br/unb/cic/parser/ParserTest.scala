@@ -36,9 +36,9 @@ class ParserTest extends AnyFunSuite {
     assert(pure("MODULE")("abc") == List(("MODULE", "abc")))
   }
 
-  ignore("tests for the fail parser") {
-    assert(fail("abc") == Nil)
-    assert(fail("") == Nil)
+  test("tests for the fail parser") {
+    assert(failed("abc") == List())
+    assert(failed("") == List())
   }
 
   test("tests for the choice combinator") {
