@@ -65,7 +65,7 @@ def number: Parser[Int] = bind(digit)((c: Char) =>
 
 def keyword(k: String) : Parser[String] =
   bind(alpha)((c:Char) =>
-    bind(many(alphaOrDigit))((cs: List[Char]) => if (c::cs).mkString("") == k then pure(k) else fail))
+    bind(many(alphaOrDigit))((cs: List[Char]) => if (c::cs).mkString("") == k then pure(k) else failed))
 
 def identifier : Parser[String] =
   bind(alpha)((c:Char) =>
