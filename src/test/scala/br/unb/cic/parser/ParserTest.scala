@@ -18,7 +18,6 @@ class ParserTest extends AnyFunSuite {
     assert(sat ((c: Char) => c == ',') (",abc") == List((',', "abc")))
   }
 
-
   test("tests for the digit parser") {
     assert(digit("9abc") == List(('9', "abc")))
     assert(digit("") == Nil)
@@ -49,15 +48,36 @@ class ParserTest extends AnyFunSuite {
     assert(choice(alpha)(alpha)("9abc") == List())
   }
 
-  test("test for the bind combinator") {
+  test("tests for the bind combinator") {
       assert(bind(digit)((c: Char) => pure(c.toInt))("abc") == List())
       assert(bind(digit)((c: Char) => pure(c.asDigit))("9abc") == List((9, "abc")))
       assert(number("9abc") == List((9, "abc")))
+      assert(number("923abc") == List((923,"abc")))
       assert(sum("4+3abc") == List((7, "abc")))
+  }
+
+  test("tests for the keyword primitive") {
+    assert(keyword("MODULE")("MODULE foo") == List(("MODULE", " foo")))
+    assert(keyword("BEGIN")("MODULE foo") == List())
+  }
+
+  test("tests for identifiers") {
+    assert(identifier("9bc") == List())
+    assert(identifier("a9bc 123") == List(("a9bc", " 123")))
+    assert(identifier("a_bc 123") == List(("a_bc", " 123")))
+    assert(identifier("a>bc 123") == List(("a", ">bc 123")))
+    assert(identifier("_a>bc 123") == List())
+  }
+
+  ignore("tests for parsing expressions") {
+    assert(expParser("x+y+z") == List((Variable("x"), "+y+z")))
+    assert(expParser("99+y+z") == List((Const(99), "+y+z")))
+    assert(add("99+y") == List((Add(Const(99), Variable("y")), "")))
+    assert(expParser("99+y") == List((Add(Const(99), Variable("y")), "")))
   }
 
   def sum: Parser[Int] =
     bind(number)((x: Int) =>
-      bind(char('+'))((c: Char) =>
+      bind(symbol('+'))(_ =>
         bind(number)((y: Int) => pure(x + y))))
 }
