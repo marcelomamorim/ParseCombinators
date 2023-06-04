@@ -1,7 +1,5 @@
 package br.unb.cic.parser
 
-import scala.annotation.targetName
-
 type Parser[A] = String => List[(A, String)]
 
 /* the first layer (more primitive) parsers */
@@ -91,9 +89,14 @@ case class Const(v: Int) extends Expression
 case class Add(l: Expression, r: Expression) extends Expression
 case class Mul(l: Expression, r: Expression) extends Expression
 
-/* TODO: stack overflow here. we must rewrite this implementation using the left factor pattern */ 
+/* TODO: stack overflow here. we must rewrite this implementation using the left factor pattern */
+/**
+ * ## Left Factoring: 
+ * - grammar transformation
+ * - top-down parsing
+ * - Fatoração com termo à esquerda
+ * */
 def expParser: Parser[Expression] = choice(add)(choice(variable)(const))
-
 def variable : Parser[Expression] = bind(identifier)((s: String) => pure(Variable(s)))
 def const : Parser[Expression] = bind(number)((n: Int) => pure(Const(n)))
 def add: Parser[Expression] =

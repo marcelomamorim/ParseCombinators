@@ -9,7 +9,8 @@ class ParserTest extends AnyFunSuite {
   }
 
   test("item on nonempty string") {
-    assert(item("abc") == List(('a', "bc")))
+    val testItem = item("abc")
+    assert(testItem == List(('a', "bc")))
   }
 
   test("tests for the sat parser") {
@@ -74,6 +75,11 @@ class ParserTest extends AnyFunSuite {
     assert(expParser("99+y+z") == List((Const(99), "+y+z")))
     assert(add("99+y") == List((Add(Const(99), Variable("y")), "")))
     assert(expParser("99+y") == List((Add(Const(99), Variable("y")), "")))
+  }
+
+  test("tests for parsing expressions - experimental") {
+    val variable = expParser("x+y")
+    assert(variable == List(Add(Variable("x"), Variable("y"))))
   }
 
   def sum: Parser[Int] =
