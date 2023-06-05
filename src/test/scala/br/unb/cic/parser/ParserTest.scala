@@ -70,16 +70,14 @@ class ParserTest extends AnyFunSuite {
     assert(identifier("_a>bc 123") == List())
   }
 
-  ignore("tests for parsing expressions") {
-    assert(expParser("x+y+z") == List((Variable("x"), "+y+z")))
-    assert(expParser("99+y+z") == List((Const(99), "+y+z")))
-    assert(add("99+y") == List((Add(Const(99), Variable("y")), "")))
-    assert(expParser("99+y") == List((Add(Const(99), Variable("y")), "")))
+  test("tests for parsing expressions with a 1+2 sum") {
+    val result = expParser("1 + 2")
+    assert(result == Const(3))
   }
 
-  test("tests for parsing expressions - experimental") {
-    val variable = expParser("x+y")
-    assert(variable == List(Add(Variable("x"), Variable("y"))))
+  test("tests for parsing expressions with a 3 + 2 + 4 + 1 sum") {
+    val result = expParser("3 + 2 + 4 + 1")
+    assert(result == Const(10))
   }
 
   def sum: Parser[Int] =

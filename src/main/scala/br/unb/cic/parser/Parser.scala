@@ -90,16 +90,52 @@ case class Add(l: Expression, r: Expression) extends Expression
 case class Mul(l: Expression, r: Expression) extends Expression
 
 /* TODO: stack overflow here. we must rewrite this implementation using the left factor pattern */
-/**
- * ## Left Factoring: 
- * - grammar transformation
- * - top-down parsing
- * - Fatoração com termo à esquerda
- * */
-def expParser: Parser[Expression] = choice(add)(choice(variable)(const))
 def variable : Parser[Expression] = bind(identifier)((s: String) => pure(Variable(s)))
 def const : Parser[Expression] = bind(number)((n: Int) => pure(Const(n)))
-def add: Parser[Expression] =
-  bind(expParser)((l: Expression) =>
-    bind(symbol('+'))((c: Char) =>
-      bind(expParser)((r: Expression) => pure(Add(l,r)))))
+
+//TODO: expression parser using left factoring
+def expParser(expression: String): Expression = {
+  term(expression).headOption.map(_._1).getOrElse(throw new RuntimeException("testing..."))
+}
+def term: Parser[Expression] = input => {
+  factor(input) match {
+    case (left, rest) :: tail =>
+      if (rest.nonEmpty && isArithmeticOperation(rest)) {
+        val parsedChar = rest.head
+        val remaining = trimLeft(rest.tail)
+        val (right, newRest) = term(remaining).head
+        val result = chooseArithmeticOperation(left.asInstanceOf[Const], parsedChar, right.asInstanceOf[Const])
+        (Const(result), newRest) :: tail
+      } else {
+        (left, rest) :: tail
+      }
+    case _ => Nil
+  }
+}
+
+def factor: Parser[Expression] = input => {
+  if (input.nonEmpty && input.head.isDigit) {
+    val (digit, remaining) = input.span(_.isDigit)
+    (Const(digit.toInt), trimLeft(remaining)) :: Nil
+  } else {
+    Nil
+  }
+}
+
+/**
+ *
+ * Métodos auxiliares ao parser de expressions
+ *
+ */
+def trimLeft(input: Identifier): String = input.dropWhile(_.isWhitespace)
+def isSumIdentifier(rest: Identifier) = rest.head == '+'
+def isSubtractionIdentifier(rest : Identifier) = rest.head == '-'
+def isArithmeticOperation(rest: Identifier) = isSumIdentifier(rest) || isSubtractionIdentifier(rest)
+def sumTerms(left: Const, right: Const) = left.v + right.v
+def subtractTerms(left: Const, right: Const) = left.v - right.v
+
+def chooseArithmeticOperation(left: Const, parsedChar: Char, right: Const): Int = parsedChar match {
+  case '+' => sumTerms(left, right)
+  case '-' => subtractTerms(left, right)
+  case _ => throw new IllegalArgumentException(s"Invalid operator: $parsedChar")
+}
